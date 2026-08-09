@@ -141,7 +141,10 @@ async function request<T>(
 
   if (res.status === 401) {
     clearToken()
-    window.location.href = '/admin/login'
+    if (typeof window !== 'undefined') {
+      const loginUrl = new URL('/admin/login', window.location.origin).toString()
+      window.location.assign(loginUrl)
+    }
     throw new Error('Unauthorized')
   }
 
