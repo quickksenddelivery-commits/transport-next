@@ -151,7 +151,11 @@ async function request<T>(
   }
 
   if (res.status === 204) return undefined as T
-  return res.json() as Promise<T>
+  const json = await res.json().catch(() => null)
+  if (json && typeof json === 'object' && (json as Record<string, unknown>).status === 'success' && 'data' in (json as Record<string, unknown>)) {
+    return ((json as Record<string, unknown>).data ?? json) as T
+  }
+  return json as T
 }
 
 // ── API surface ────────────────────────────────────────────────────────────

@@ -12,6 +12,7 @@ import { logger } from '@/server/utils/logger';
 // Public — subscribe to the newsletter
 export async function POST(request: NextRequest) {
   try {
+    await connectDB();
     await subscribeLimiter(request);
 
     const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
