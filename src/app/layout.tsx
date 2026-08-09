@@ -78,8 +78,8 @@ const EXTENSION_ERROR_FILTER = `
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className="antialiased">
-      <body>
+    <html lang="en" className="antialiased" style={{ backgroundColor: '#F5F7FA' }}>
+      <body style={{ backgroundColor: '#F5F7FA' }}>
         <Script id="suppress-extension-errors" strategy="beforeInteractive">
           {EXTENSION_ERROR_FILTER}
         </Script>

@@ -1,15 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 
-export function useScrollReveal(threshold = 0.12) {
+export function useScrollReveal(threshold = 0.08) {
   const ref = useRef<HTMLDivElement>(null)
   const [inView, setInView] = useState(false)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = ref.current
     if (!el) return
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setInView(true); obs.disconnect() } },
-      { threshold }
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true)
+          obs.disconnect()
+        }
+      },
+      { threshold, rootMargin: '0px 0px -16% 0px' }
     )
     obs.observe(el)
     return () => obs.disconnect()

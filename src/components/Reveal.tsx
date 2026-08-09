@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 
 type Dir = 'up' | 'down' | 'left' | 'right' | 'scale' | 'fade'
 
@@ -32,12 +32,17 @@ export default function Reveal({
   const ref = useRef<HTMLDivElement>(null)
   const [vis, setVis] = useState(false)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = ref.current
     if (!el) return
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVis(true); obs.disconnect() } },
-      { threshold }
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVis(true)
+          obs.disconnect()
+        }
+      },
+      { threshold, rootMargin: '0px 0px -16% 0px' }
     )
     obs.observe(el)
     return () => obs.disconnect()
