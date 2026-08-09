@@ -1,7 +1,9 @@
 const requiredEnvVars = ['MONGODB_URI', 'JWT_SECRET', 'JWT_REFRESH_SECRET'];
+const productionEnvVars = [...requiredEnvVars, 'RESEND_API_KEY'];
 
 export const validateEnv = () => {
-  const missing = requiredEnvVars.filter((key) => !process.env[key]);
+  const vars = process.env.NODE_ENV === 'production' ? productionEnvVars : requiredEnvVars;
+  const missing = vars.filter((key) => !process.env[key]);
   if (missing.length > 0) {
     throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
   }

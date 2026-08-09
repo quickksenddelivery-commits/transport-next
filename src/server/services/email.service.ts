@@ -10,6 +10,9 @@ import { generateAllToBuffers } from './document.service';
 let _resend: Resend | null = null;
 
 const getResend = (): Resend => {
+  if (!env.RESEND_API_KEY) {
+    throw new Error('RESEND_API_KEY is required to send email in production');
+  }
   if (!_resend) _resend = new Resend(env.RESEND_API_KEY);
   return _resend;
 };
@@ -22,6 +25,16 @@ interface SendEmailArgs {
 }
 
 export const sendEmail = async ({ to, subject, html, text }: SendEmailArgs) => {
+  if (!to || !to.trim()) {
+    throw new Error('Email recipient is required');
+  }
+  if (!subject || !subject.trim()) {
+    throw new Error('Email subject is required');
+  }
+  if (!html || !html.trim()) {
+    throw new Error('Email HTML content is required');
+  }
+
   if (process.env.NODE_ENV !== 'production') {
     logger.info(`[DEV] Email skipped — would have sent to ${to}`, { subject });
     return { id: 'dev-skipped' };

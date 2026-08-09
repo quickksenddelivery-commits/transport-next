@@ -1,5 +1,4 @@
 import type { NextRequest } from 'next/server';
-import { connectDB } from '@/server/config/database';
 import { env } from '@/server/config/env';
 import { AppError, errorResponse, jsonMessage } from '@/server/middleware/errorHandler';
 import { contactLimiter, getClientIp } from '@/server/middleware/rateLimit';
