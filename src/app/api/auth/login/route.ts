@@ -17,6 +17,7 @@ const signToken = (id: string) =>
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
   try {
+    await connectDB();
     await authLimiter(request);
 
     const body = await request.json().catch(() => ({}));

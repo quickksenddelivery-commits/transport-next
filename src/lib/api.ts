@@ -1,6 +1,7 @@
 // The frontend is served by the same Next.js app as the API — every request
 // is same-origin, so the base is the empty string.
 export const BASE = ''
+export const ADMIN_SECRET = process.env.NEXT_PUBLIC_ADMIN_SECRET
 
 // ── Token helpers ──────────────────────────────────────────────────────────
 export const TOKEN_KEY = 'qsd_admin_token'
@@ -157,7 +158,12 @@ async function request<T>(
 export const api = {
   // Auth
   login: (email: string, password: string) =>
-    request<{ token: string }>('POST', '/api/auth/login', { email, password }),
+    request<{ token: string }>(
+      'POST',
+      '/api/auth/login',
+      { email, password },
+      ADMIN_SECRET ? { 'x-admin-secret': ADMIN_SECRET } : undefined
+    ),
 
   logout: () =>
     request<void>('POST', '/api/auth/logout'),
