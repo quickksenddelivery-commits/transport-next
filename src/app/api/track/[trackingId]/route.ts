@@ -14,6 +14,13 @@ const maskEmail = (email = '') => {
   return `${user.slice(0, 2)}***@${domain}`;
 };
 
+const normalizeTrackingId = (trackingId: string) =>
+  trackingId
+    .trim()
+    .replace(/[\u2010-\u2015]/g, '-')
+    .replace(/\s+/g, '')
+    .toUpperCase();
+
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ trackingId: string }> }
@@ -21,9 +28,17 @@ export async function GET(
   try {
     await connectDB();
     const { trackingId } = await params;
+    const normalizedTrackId = normalizeTrackingId(trackingId);
+    const possibleTrackIds = [normalizedTrackId];
+
+    if (normalizedTrackId.startsWith('AXP-')) {
+      possibleTrackIds.push(normalizedTrackId.replace(/^AXP-/, 'QSD-'));
+    } else if (normalizedTrackId.startsWith('QSD-')) {
+      possibleTrackIds.push(normalizedTrackId.replace(/^QSD-/, 'AXP-'));
+    }
 
     const shipment = await Shipment.findOne({
-      trackingNumber: trackingId.toUpperCase(),
+      trackingNumber: { $in: possibleTrackIds },
     })
       .select('-isDeleted -notes -declaredValue')
       .lean();

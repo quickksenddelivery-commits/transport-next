@@ -182,7 +182,7 @@ export const api = {
   track: async (id: string): Promise<PublicShipment> => {
     const res = await request<unknown>('GET', `/api/track/${encodeURIComponent(id)}`)
     const r = res as Record<string, unknown>
-    return ((r.data as Record<string, unknown>)?.shipment ?? r) as PublicShipment
+    return ((r.data as Record<string, unknown>)?.shipment ?? (r.shipment as PublicShipment) ?? r) as PublicShipment
   },
 
   // Public — quote calculator
