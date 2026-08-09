@@ -1,11 +1,14 @@
 type P = { className?: string }
 
-const ico = (paths: string | string[], viewBox = '0 0 24 24') =>
-  ({ className = 'w-5 h-5' }: P) => (
+const ico = (paths: string | string[], viewBox = '0 0 24 24') => {
+  const Icon = ({ className = 'w-5 h-5' }: P) => (
     <svg className={className} viewBox={viewBox} fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75}>
       {(Array.isArray(paths) ? paths : [paths]).map((d, i) => <path key={i} d={d} />)}
     </svg>
   )
+  Icon.displayName = 'Icon'
+  return Icon
+}
 
 export const IcoPackage       = ico('M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9')
 export const IcoGlobe         = ico(['M12 21a9 9 0 100-18 9 9 0 000 18z', 'M3.6 9h16.8M3.6 15h16.8M12 3c-2.485 0-4.5 4.03-4.5 9s2.015 9 4.5 9 4.5-4.03 4.5-9-2.015-9-4.5-9z'])

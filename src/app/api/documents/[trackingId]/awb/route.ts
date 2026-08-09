@@ -4,6 +4,7 @@ import { connectDB } from '@/server/config/database';
 import { Shipment } from '@/server/models/Shipment';
 import { AppError, errorResponse } from '@/server/middleware/errorHandler';
 import { generateAWB } from '@/server/services/document.service';
+import { normalizeTrackingId } from '@/server/utils/helpers';
 import type { TemplateShipment } from '@/server/services/email.templates';
 
 export async function GET(
@@ -15,7 +16,7 @@ export async function GET(
     const { trackingId } = await params;
 
     const shipment = await Shipment.findOne({
-      trackingNumber: trackingId.toUpperCase(),
+      trackingNumber: normalizeTrackingId(trackingId),
       isDeleted: false,
     }).lean();
 

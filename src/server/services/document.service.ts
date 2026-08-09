@@ -73,11 +73,6 @@ function drawField(doc: Doc, x: number, y: number, w: number, label: string, val
   doc.fillColor(C.text).font('Helvetica-Bold').fontSize(9).text(String(value || '—'), x, y + 9, { width: w });
 }
 
-function drawDivider(doc: Doc, y: number): number {
-  doc.moveTo(ML, y).lineTo(PW - MR, y).strokeColor(C.border).lineWidth(0.5).stroke();
-  return y + 1;
-}
-
 function drawFooters(doc: Doc, trackingNumber: string): void {
   const count = doc.bufferedPageRange().count;
   for (let i = 0; i < count; i++) {

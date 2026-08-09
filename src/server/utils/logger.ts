@@ -6,7 +6,7 @@ import fs from 'fs';
 const { combine, timestamp, errors, json, colorize, printf } = format;
 
 const devFormat = printf(
-  ({ level, message, timestamp: ts, stack, service, ...meta }: Record<string, unknown>) => {
+  ({ level, message, timestamp: ts, stack, ...meta }: Record<string, unknown>) => {
     const base = `${ts} [${level}]: ${stack || message}`;
     const hasMeta = Object.keys(meta).length > 0;
     return hasMeta ? `${base}\n${JSON.stringify(meta, null, 2)}` : base;

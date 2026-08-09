@@ -86,3 +86,10 @@ export const maskEmail = (email: string) => {
   const [user, domain] = email.split('@');
   return `${user.slice(0, 2)}***@${domain}`;
 };
+
+export const normalizeTrackingId = (trackingId: string) =>
+  trackingId
+    .trim()
+    .replace(/[\u2010-\u2015]/g, '-')
+    .replace(/\s+/g, '')
+    .toUpperCase();

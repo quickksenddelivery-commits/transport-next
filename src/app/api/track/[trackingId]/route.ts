@@ -2,6 +2,7 @@ import type { NextRequest } from 'next/server';
 import { connectDB } from '@/server/config/database';
 import { Shipment } from '@/server/models/Shipment';
 import { AppError, errorResponse, jsonSuccess } from '@/server/middleware/errorHandler';
+import { normalizeTrackingId } from '@/server/utils/helpers';
 
 const maskName = (name = '') => {
   const parts = name.trim().split(' ');
@@ -13,13 +14,6 @@ const maskEmail = (email = '') => {
   const [user, domain] = email.split('@');
   return `${user.slice(0, 2)}***@${domain}`;
 };
-
-const normalizeTrackingId = (trackingId: string) =>
-  trackingId
-    .trim()
-    .replace(/[\u2010-\u2015]/g, '-')
-    .replace(/\s+/g, '')
-    .toUpperCase();
 
 export async function GET(
   _request: NextRequest,
