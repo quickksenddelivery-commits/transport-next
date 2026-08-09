@@ -1,26 +1,350 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-brand-blue: #1565C0;
+  --color-brand-blue-dark: #0D47A1;
+  --color-brand-blue-light: #1976D2;
+  --color-brand-orange: #FF9800;
+  --color-brand-orange-dark: #E68900;
+  --color-bg-light: #F5F7FA;
+  --color-text-primary: #1F2937;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #F5F7FA;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #fafaf9; }
+::-webkit-scrollbar-thumb { background: #FF9800; border-radius: 3px; }
+
+/* ── Custom utilities ─────────────────────────────────────── */
+@layer utilities {
+  .gradient-text {
+    background: linear-gradient(135deg, #FF9800, #1565C0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .card-hover {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(21, 101, 192, 0.08);
+    color: #1565C0;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .btn-primary {
+    background: #FF9800;
+    color: #1F2937;
+    font-weight: 700;
+    padding: 14px 28px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    text-decoration: none;
+  }
+  .btn-primary:hover {
+    background: #E68900;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 152, 0, 0.4);
+  }
+
+  .btn-outline-white {
+    background: transparent;
+    color: white;
+    font-weight: 700;
+    padding: 14px 28px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    font-size: 15px;
+  }
+  .btn-outline-white:hover {
+    border-color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .animate-float { animation: float 4s ease-in-out infinite; }
+  .animate-float-delay { animation: float 4s ease-in-out infinite 1.5s; }
+  .animate-marquee         { animation: marquee         30s linear infinite; }
+  .animate-marquee-reverse { animation: marqueeReverse  30s linear infinite; }
+  .animate-fadeInUp { animation: fadeInUp 0.6s ease both; }
+  .animate-countUp { animation: countUp 0.5s ease both; }
+
+  /* ── Scroll-reveal animations ──────────────────────────── */
+  .animate-reveal-up    { animation: revealUp    0.72s cubic-bezier(0.16,1,0.3,1) both; }
+  .animate-reveal-left  { animation: revealLeft  0.72s cubic-bezier(0.16,1,0.3,1) both; }
+  .animate-reveal-right { animation: revealRight 0.72s cubic-bezier(0.16,1,0.3,1) both; }
+  .animate-reveal-scale { animation: revealScale 0.72s cubic-bezier(0.16,1,0.3,1) both; }
+  .animate-fade-in      { animation: fadeIn      0.45s ease both; }
+  .animate-glow-pulse   { animation: glowPulse   2.5s  ease-in-out infinite; }
+  .animate-icon-bounce  { animation: iconBounce  3.2s  ease-in-out infinite; }
+
+  /* ── Shimmer gradient text ────────────────────────────── */
+  .gradient-text-shimmer {
+    background: linear-gradient(135deg, #FF9800 0%, #1565C0 35%, #FF9800 65%, #1565C0 100%);
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 5s linear infinite;
+  }
+
+  /* ── Enhanced button glow ─────────────────────────────── */
+  .btn-primary:focus-visible { outline: 3px solid #FF9800; outline-offset: 3px; }
+  .btn-primary:active { transform: translateY(0) scale(0.97); }
+
+  /* ── Blue outline button (replaces old outline-white for light bg) ── */
+  .btn-outline-blue {
+    background: transparent;
+    color: #1565C0;
+    font-weight: 700;
+    padding: 14px 28px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid #1565C0;
+    cursor: pointer;
+    font-size: 15px;
+    text-decoration: none;
+  }
+  .btn-outline-blue:hover {
+    background: #1565C0;
+    color: white;
+    transform: translateY(-2px);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ── Keyframes ────────────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes marqueeReverse {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(52px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes revealLeft {
+  from { opacity: 0; transform: translateX(-60px); }
+  to   { opacity: 1; transform: translateX(0);     }
+}
+@keyframes revealRight {
+  from { opacity: 0; transform: translateX(60px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+@keyframes revealScale {
+  from { opacity: 0; transform: scale(0.82); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+@keyframes shimmer {
+  0%   { background-position: 0%   center; }
+  100% { background-position: 300% center; }
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 24px rgba(255,152,0,0.4); }
+  50%       { box-shadow: 0 0 52px rgba(255,152,0,0.8); }
+}
+@keyframes iconBounce {
+  0%, 100% { transform: translateY(0);   }
+  50%       { transform: translateY(-8px); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes spin {
+  from { transform: rotate(0deg);   }
+  to   { transform: rotate(360deg); }
+}
+@keyframes slowZoom {
+  from { transform: scale(1);    }
+  to   { transform: scale(1.1);  }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes flyPlane {
+  0%   { transform: translate(0px, 0px);          opacity: 0; }
+  6%   { opacity: 1; }
+  91%  { opacity: 1; }
+  100% { transform: translate(130vw, -52vh);       opacity: 0; }
+}
+@keyframes routeDash {
+  to { stroke-dashoffset: -120; }
+}
+@keyframes heroParticle {
+  0%   { transform: translateY(0)   scale(1);   opacity: 0.7; }
+  50%  { transform: translateY(-22px) scale(1.4); opacity: 0.3; }
+  100% { transform: translateY(0)   scale(1);   opacity: 0.7; }
+}
+@keyframes travelLine {
+  0%   { left: 12.5%; opacity: 1; }
+  100% { left: 87.5%; opacity: 1; }
+}
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+@keyframes loadProgress {
+  0%   { width: 0%; }
+  40%  { width: 60%; }
+  70%  { width: 82%; }
+  90%  { width: 94%; }
+  100% { width: 100%; }
+}
+@keyframes loadDots {
+  0%, 80%, 100% { transform: translateY(0);   opacity: 0.35; }
+  40%           { transform: translateY(-7px); opacity: 1;    }
+}
+@keyframes loaderRingOuter {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes loaderRingInner {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+@keyframes loaderFadeSlide {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── BrandVideo — looping animated brand banner ──────────────
+   One shared 14s cycle so every layer resyncs on loop restart. */
+@keyframes brandLogoReveal {
+  0%   { opacity: 0; transform: scale(0.7); }
+  6%   { opacity: 1; transform: scale(1); }
+  92%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.9); }
+}
+@keyframes brandWordmarkReveal {
+  0%, 10% { opacity: 0; transform: translateY(14px); }
+  16%     { opacity: 1; transform: translateY(0); }
+  92%     { opacity: 1; transform: translateY(0); }
+  100%    { opacity: 0; transform: translateY(-8px); }
+}
+@keyframes brandTaglineReveal {
+  0%, 18% { opacity: 0; }
+  24%     { opacity: 1; }
+  92%     { opacity: 1; }
+  100%    { opacity: 0; }
+}
+@keyframes brandStat1Reveal {
+  0%, 30% { opacity: 0; transform: translateY(8px); }
+  36%     { opacity: 1; transform: translateY(0); }
+  92%     { opacity: 1; transform: translateY(0); }
+  100%    { opacity: 0; }
+}
+@keyframes brandStat2Reveal {
+  0%, 38% { opacity: 0; transform: translateY(8px); }
+  44%     { opacity: 1; transform: translateY(0); }
+  92%     { opacity: 1; transform: translateY(0); }
+  100%    { opacity: 0; }
+}
+@keyframes brandStat3Reveal {
+  0%, 46% { opacity: 0; transform: translateY(8px); }
+  52%     { opacity: 1; transform: translateY(0); }
+  92%     { opacity: 1; transform: translateY(0); }
+  100%    { opacity: 0; }
+}
+@keyframes brandRouteDraw {
+  0%, 28% { stroke-dashoffset: 900; opacity: 0; }
+  32%     { opacity: 1; }
+  85%     { stroke-dashoffset: 0; opacity: 1; }
+  92%     { opacity: 1; }
+  100%    { opacity: 0; }
+}
+@keyframes brandPlaneTravel {
+  0%, 28% { offset-distance: 0%; opacity: 0; }
+  32%     { opacity: 1; }
+  85%     { offset-distance: 100%; opacity: 1; }
+  92%     { opacity: 1; }
+  100%    { opacity: 0; }
+}
+.brand-logo     { animation: brandLogoReveal     14s ease-in-out infinite; }
+.brand-wordmark { animation: brandWordmarkReveal 14s ease-in-out infinite; }
+.brand-tagline  { animation: brandTaglineReveal  14s ease-in-out infinite; }
+.brand-stat-1   { animation: brandStat1Reveal    14s ease-in-out infinite; }
+.brand-stat-2   { animation: brandStat2Reveal    14s ease-in-out infinite; }
+.brand-stat-3   { animation: brandStat3Reveal    14s ease-in-out infinite; }
+.brand-route    { animation: brandRouteDraw      14s ease-in-out infinite; }
+.brand-plane {
+  offset-path: path("M 60 360 C 320 200, 480 420, 700 260 S 1080 120, 1140 100");
+  offset-rotate: 0deg;
+  animation: brandPlaneTravel 14s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-logo, .brand-wordmark, .brand-tagline,
+  .brand-stat-1, .brand-stat-2, .brand-stat-3,
+  .brand-route, .brand-plane {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+  .brand-plane { offset-distance: 45%; }
 }
