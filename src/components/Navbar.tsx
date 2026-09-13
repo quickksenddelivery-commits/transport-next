@@ -1,6 +1,6 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Logo from './Logo'
 
 type NavChild = { label: string; to: string; desc: string; icon: React.ReactNode }
@@ -62,6 +62,7 @@ export default function Navbar() {
   const [openMobile,  setOpenMobile]  = useState<string | null>(null)
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const location   = useLocation()
+  const navigate   = useNavigate()
 
   const enterDesktop = (label: string) => {
     if (closeTimer.current) clearTimeout(closeTimer.current)
@@ -318,6 +319,18 @@ export default function Navbar() {
               })}
             </div>
 
+            {/* Search */}
+            <button
+              onClick={() => navigate('/search')}
+              className="w-10 h-10 rounded-lg flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-all"
+              aria-label="Search"
+              title="Search"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}>
+                <circle cx="11" cy="11" r="7" /><path d="M21 21l-4.35-4.35" />
+              </svg>
+            </button>
+
             {/* Get a Quote CTA */}
             <Link
               to="/contact"
@@ -450,6 +463,14 @@ export default function Navbar() {
             >
               Get a Quote
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5}><path d="M9 5l7 7-7 7"/></svg>
+            </Link>
+            <Link
+              to="/search"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold transition-colors"
+              style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75}><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.35-4.35" /></svg>
+              Search
             </Link>
             <Link
               to="/track"

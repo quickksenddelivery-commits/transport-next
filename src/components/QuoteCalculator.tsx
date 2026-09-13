@@ -6,9 +6,9 @@ import Reveal from './Reveal'
 
 const ROUTES = [
   { label: 'Standard (5–7 days)',  days: '5–7',   rate: 1,    key: 'standard'  },
-  { label: 'Express (2–3 days)',   days: '2–3',   rate: 1.8,  key: 'express'   },
-  { label: 'Overnight (Next day)', days: '1',     rate: 2.8,  key: 'overnight' },
-  { label: 'Economy (7–14 days)',  days: '7–14',  rate: 0.65, key: 'economy'   },
+  { label: 'Express (2–3 days)',   days: '2–3',   rate: 1.6,  key: 'express'   },
+  { label: 'Overnight (Next day)', days: '1',     rate: 2.2,  key: 'overnight' },
+  { label: 'Same Day',             days: 'Today', rate: 3.0,  key: 'same_day'  },
 ]
 
 export default function QuoteCalculator() {
@@ -36,7 +36,7 @@ export default function QuoteCalculator() {
       // Fallback: local calculation when API is unavailable
       const w = parseFloat(form.weight) || 1
       const vol = ((parseFloat(form.length) || 10) * (parseFloat(form.width) || 10) * (parseFloat(form.height) || 10)) / 5000
-      const base = 8 + Math.max(w, vol) * 3.2
+      const base = 8 + Math.max(w, vol) * 1.2
       setQuote({ price: base, options: ROUTES })
     } finally {
       setLoading(false)
