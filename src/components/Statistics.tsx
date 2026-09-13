@@ -63,7 +63,7 @@ export default function Statistics() {
       <div className="absolute inset-0">
         <img
           src="https://images.pexels.com/photos/4481326/pexels-photo-4481326.jpeg?auto=compress&cs=tinysrgb&w=1600&q=80"
-          alt=""
+          alt="Aerial view of a freight logistics distribution hub"
           className="w-full h-full object-cover"
           style={{ filter: 'brightness(0.4)' }}
         />

@@ -2,9 +2,9 @@ import AboutPage from "@/views/AboutPage";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "About Us",
+  title: "About Accessiblexpress Logistics",
   description:
-    "Since 2005, Accessiblexpress has helped businesses and families ship to 120+ countries with transparent pricing and real-time tracking.",
+    "Since 2005, we have helped businesses and families ship parcels, freight, and household moves to 120+ countries with transparent pricing and real-time tracking.",
   path: "/about",
 });
 

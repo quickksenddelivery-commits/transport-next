@@ -72,7 +72,7 @@ export default function AboutPage() {
               ].map(v => (
                 <div key={v.title} className="bg-slate-50 rounded-2xl p-6 border border-slate-100">
                   <div className="mb-3">{v.icon}</div>
-                  <h4 className="font-bold text-slate-800 mb-1.5">{v.title}</h4>
+                  <h3 className="font-bold text-slate-800 mb-1.5">{v.title}</h3>
                   <p className="text-slate-500 text-sm">{v.desc}</p>
                 </div>
               ))}

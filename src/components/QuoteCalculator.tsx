@@ -141,7 +141,7 @@ export default function QuoteCalculator() {
             <div className="lg:col-span-2 relative overflow-hidden p-8 md:p-10 flex flex-col justify-center">
               <img
                 src="https://images.pexels.com/photos/2159065/pexels-photo-2159065.jpeg?auto=compress&cs=tinysrgb&w=800&q=80"
-                alt=""
+                alt="Container ship loaded with cargo at a shipping port"
                 className="absolute inset-0 w-full h-full object-cover"
               />
               <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(13,8,64,0.97) 0%, rgba(22,49,102,0.94) 100%)' }} />

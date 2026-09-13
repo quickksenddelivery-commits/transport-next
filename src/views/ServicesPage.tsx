@@ -68,7 +68,7 @@ export default function ServicesPage() {
       {/* Hero */}
       <div className="relative py-24 overflow-hidden" style={{ background: 'linear-gradient(135deg, #0D47A1 0%, #1976D2 100%)' }}>
         <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
-        <img src="https://images.pexels.com/photos/4483942/pexels-photo-4483942.jpeg?auto=compress&cs=tinysrgb&w=1400&h=600&fit=crop" alt="" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-10" />
+        <img src="https://images.pexels.com/photos/4483942/pexels-photo-4483942.jpeg?auto=compress&cs=tinysrgb&w=1400&h=600&fit=crop" alt="Container ship and logistics warehouse aerial view" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-10" />
         <div className="container mx-auto px-6 relative z-10 text-center">
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wider mb-6" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.8)' }}>
             Our Services
@@ -87,6 +87,7 @@ export default function ServicesPage() {
       {/* Services */}
       <div className="py-20 bg-slate-50">
         <div className="container mx-auto px-6">
+          <h2 className="sr-only">Our Services</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {SERVICES.map(svc => (
               <div id={svc.id} key={svc.id}>

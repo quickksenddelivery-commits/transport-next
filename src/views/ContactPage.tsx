@@ -75,6 +75,7 @@ export default function ContactPage() {
         <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {/* Left: Channels */}
           <div className="space-y-5">
+            <h2 className="sr-only">Contact Channels</h2>
             {[
               { icon: <svg className="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75}><path d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg>, title: 'Live Chat', desc: 'Chat with a support agent right now. Available 24/7.', action: 'Start Chat →', color: 'bg-blue-50 border-blue-100' },
               { icon: <svg className="w-5 h-5 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75}><path d="M2.25 6.338c0 .768.107 1.51.303 2.21 1.14 4.075 4.833 7.77 8.908 8.907.7.196 1.443.303 2.21.303 2.074 0 4.012-.594 5.644-1.625M2.25 6.338C2.25 4.517 3.663 3 5.406 3h1.125c.337 0 .662.088.948.254L9.374 4.46a1.125 1.125 0 01.414 1.512L8.73 7.67a.75.75 0 00-.05.544l.052.213c.398 1.625 1.455 3.178 2.73 4.504 1.325 1.275 2.879 2.332 4.504 2.73l.213.052a.75.75 0 00.544-.05l1.696-1.057a1.125 1.125 0 011.512.414l1.207 1.9c.167.287.255.61.255.949v1.125c0 1.742-1.516 3.156-3.338 3.156"/></svg>, title: 'Call Us', desc: '+1 (512) 678-5033', action: 'Available 24/7', color: 'bg-green-50 border-green-100' },
@@ -86,7 +87,7 @@ export default function ContactPage() {
                 <div className="flex items-start gap-3">
                   <span className="mt-0.5">{ch.icon}</span>
                   <div>
-                    <h4 className="font-bold text-slate-800 text-sm">{ch.title}</h4>
+                    <h3 className="font-bold text-slate-800 text-sm">{ch.title}</h3>
                     <p className="text-slate-500 text-xs mt-0.5 mb-2">{ch.desc}</p>
                     <p className="text-blue-700 text-xs font-semibold">{ch.action}</p>
                   </div>

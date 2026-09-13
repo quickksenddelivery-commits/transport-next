@@ -4,7 +4,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "Press & Media",
   description:
-    "News, announcements, and press assets from Accessiblexpress. For media inquiries, contact our press desk.",
+    "News, press releases, brand assets, and media kits from Accessiblexpress. For all media inquiries, contact our dedicated press desk for a fast reply today.",
   path: "/press",
 });
 

@@ -76,7 +76,7 @@ export default function Footer() {
           {/* Link columns */}
           {Object.entries(LINKS).map(([section, items], colIdx) => (
             <Reveal key={section} direction="up" delay={0.1 + colIdx * 0.08}>
-              <h4 className="text-white font-bold text-sm mb-4 uppercase tracking-wider">{section}</h4>
+              <p className="text-white font-bold text-sm mb-4 uppercase tracking-wider">{section}</p>
               <ul className="space-y-2.5">
                 {items.map(item => (
                   <li key={item.label}>
@@ -104,7 +104,7 @@ export default function Footer() {
           ) : (
             <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
               <div>
-                <h4 className="text-white font-bold mb-1">Stay Informed</h4>
+                <p className="text-white font-bold mb-1">Stay Informed</p>
                 <p className="text-white/50 text-sm">
                   {subState === 'error'
                     ? <span style={{ color: '#1565C0' }}>Something went wrong — please try again.</span>

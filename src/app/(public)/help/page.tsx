@@ -2,9 +2,9 @@ import HelpCenterPage from "@/views/HelpCenterPage";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "Help Center",
+  title: "Shipping Help Center, FAQ & Support",
   description:
-    "Answers about shipping, pricing, customs, and tracking. How to get a quote, ship internationally, and file claims.",
+    "Answers about shipping, pricing, customs, and tracking — how to get a quote, ship internationally, insure parcels, and file claims with our support team.",
   path: "/help",
 });
 

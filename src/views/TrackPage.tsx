@@ -667,6 +667,7 @@ export default function TrackPage({ initialQ }: { initialQ?: string }) {
         {trackStatus === 'idle' && (
           <div className="max-w-5xl mx-auto">
             {/* Features */}
+            <h2 className="sr-only">Tracking Features</h2>
             <div className="grid md:grid-cols-3 gap-5 mb-10">
               {[
                 { icon: <svg className="w-8 h-8 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}><path d="M9.348 14.651a3.75 3.75 0 010-5.303m5.304-.001a3.75 3.75 0 010 5.304m-7.425 2.122a6.75 6.75 0 010-9.546m9.546-.001a6.75 6.75 0 010 9.547m-2.122-2.122a3.75 3.75 0 000-5.304M13.06 8.47l1.5-1.5m-8.12 8.12l1.5-1.5m5.12-5.12l-1.5 1.5m-2 2l-1.5 1.5M12 12h.008v.008H12V12z"/></svg>, title: 'Live GPS Tracking', desc: 'Every vehicle in our network is GPS-tracked. Watch your package move in real time, updated every 30 seconds.', color: 'bg-blue-50 border-blue-100' },

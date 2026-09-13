@@ -4,7 +4,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "Household & Commercial Moving Services",
   description:
-    "Professional moving for homes, offices, and international relocations. Free survey, full insurance, flexible scheduling.",
+    "Professional household and office moving, plus international relocation — free survey, packing, full insurance, and flexible scheduling worldwide, door-to-door.",
   path: "/movers",
 });
 

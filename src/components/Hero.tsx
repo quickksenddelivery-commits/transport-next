@@ -10,6 +10,7 @@ const SLIDES = [
     cta1: { label: 'Get a Quote',    to: '/contact' },
     cta2: { label: 'Track Shipment', to: '/track' },
     image: 'https://images.pexels.com/photos/1427541/pexels-photo-1427541.jpeg?auto=compress&cs=tinysrgb&w=1920',
+    imageAlt: 'Global logistics container ship loaded with cargo',
   },
   {
     eyebrow: 'Air Freight · 500+ Airports · 2–4 Day Transit',
@@ -18,6 +19,7 @@ const SLIDES = [
     cta1: { label: 'Air Freight Services', to: '/freight' },
     cta2: { label: 'Get a Quote',          to: '/contact' },
     image: 'https://images.pexels.com/photos/358319/pexels-photo-358319.jpeg?auto=compress&cs=tinysrgb&w=1920',
+    imageAlt: 'Air cargo freighter aircraft in flight',
   },
   {
     eyebrow: 'Ocean Freight · 300+ Ports · FCL & LCL',
@@ -26,6 +28,7 @@ const SLIDES = [
     cta1: { label: 'Ocean Freight', to: '/freight' },
     cta2: { label: 'Get a Quote',   to: '/contact' },
     image: 'https://images.pexels.com/photos/906982/pexels-photo-906982.jpeg?auto=compress&cs=tinysrgb&w=1920',
+    imageAlt: 'Cargo ship carrying shipping containers at sea',
   },
   {
     eyebrow: 'Home & Office Movers · Professional Relocation',
@@ -34,6 +37,7 @@ const SLIDES = [
     cta1: { label: 'Movers Services', to: '/movers' },
     cta2: { label: 'Get a Quote',     to: '/contact' },
     image: 'https://images.pexels.com/photos/4246122/pexels-photo-4246122.jpeg?auto=compress&cs=tinysrgb&w=1920',
+    imageAlt: 'Professional movers packing a home for relocation',
   },
 ]
 
@@ -134,7 +138,7 @@ export default function Hero() {
           <img
             key={i === slide ? `a${slide}` : `i${i}`}
             src={sl.image}
-            alt=""
+            alt={sl.imageAlt}
             className="absolute inset-0 w-full h-full object-cover"
             style={{ animation: i === slide ? 'kenBurns 7s ease-out forwards' : 'none', transformOrigin: 'center center' }}
             loading={i === 0 ? 'eager' : 'lazy'}
@@ -177,7 +181,7 @@ export default function Hero() {
         </div>
 
         {/* Headline — each line staggers in */}
-        <div style={{ overflow: 'hidden' }}>
+        <h1 style={{ overflow: 'hidden', margin: 0 }}>
           {s.title.split('\n').map((line, li) => (
             <div
               key={`${animKey}-${li}`}
@@ -200,7 +204,7 @@ export default function Hero() {
               </span>
             </div>
           ))}
-        </div>
+        </h1>
 
         {/* Red accent line */}
         <div

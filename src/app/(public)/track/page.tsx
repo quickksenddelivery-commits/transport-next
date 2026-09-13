@@ -3,9 +3,9 @@ import TrackPage from "@/views/TrackPage";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "Track Your Shipment",
+  title: "Track Your Shipment in Real Time",
   description:
-    "Enter your tracking number for real-time status updates on parcels, freight, and household moves worldwide.",
+    "Enter your tracking number for real-time status updates on parcels, freight, and household moves worldwide. Follow every checkpoint until it reaches your door.",
   path: "/track",
 });
 

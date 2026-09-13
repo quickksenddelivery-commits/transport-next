@@ -28,7 +28,7 @@ export default function ServiceDetailPage({ category, slug }: { category: Catego
       {/* Hero */}
       <div className="relative py-20 overflow-hidden" style={{ background: 'linear-gradient(135deg, #1565C0 0%, #0D47A1 60%, #1976D2 100%)' }}>
         <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
-        <img src={item.img} alt="" loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-10" />
+        <img src={item.img} alt={item.title} loading="eager" className="absolute inset-0 w-full h-full object-cover opacity-10" />
         <div className="container mx-auto px-6 relative z-10">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm mb-8" style={{ color: 'rgba(255,255,255,0.5)' }}>

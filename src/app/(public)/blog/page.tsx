@@ -2,9 +2,9 @@ import BlogPage from "@/views/BlogPage";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "Shipping Blog",
+  title: "Logistics & Shipping Insights Blog",
   description:
-    "Shipping guides, freight news, and logistics tips — duties, packaging, tracking, and international shipping explained.",
+    "Shipping guides, freight news, and actionable logistics tips — duties, packaging, tracking, and international shipping explained in plain English and pro tips.",
   path: "/blog",
 });
 

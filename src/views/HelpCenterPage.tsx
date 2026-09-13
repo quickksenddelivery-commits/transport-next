@@ -1,5 +1,6 @@
 'use client'
 import PageMeta from '../components/PageMeta'
+import JsonLd from '../components/JsonLd'
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -63,6 +64,20 @@ export default function HelpCenterPage() {
 
   return (
     <main style={{ paddingTop: 98 }}>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: FAQS.map(faq => ({
+            "@type": "Question",
+            name: faq.q,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: faq.a,
+            },
+          })),
+        }}
+      />
       <PageMeta title="Help Center" description="Answers to your shipping questions — tracking, customs, claims, billing, and more." />
 
       {/* Hero + search */}
@@ -137,11 +152,16 @@ export default function HelpCenterPage() {
                   <span className="font-semibold text-slate-800 text-sm pr-4">{faq.q}</span>
                   <svg className="w-5 h-5 shrink-0 text-slate-400 transition-transform" style={{ transform: openFaq === i ? 'rotate(180deg)' : 'none' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5}><path d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                {openFaq === i && (
-                  <div className="px-6 pb-5" style={{ borderTop: '1px solid rgba(21,101,192,0.08)' }}>
-                    <p className="text-slate-500 text-sm leading-relaxed pt-4">{faq.a}</p>
-                  </div>
-                )}
+                <div
+                  className="px-6 transition-all duration-300"
+                  style={{
+                    maxHeight: openFaq === i ? 500 : 0,
+                    overflow: 'hidden',
+                    borderTop: openFaq === i ? '1px solid rgba(21,101,192,0.08)' : 'none',
+                  }}
+                >
+                  <p className="text-slate-500 text-sm leading-relaxed pt-4 pb-5">{faq.a}</p>
+                </div>
               </div>
             ))}
           </div>

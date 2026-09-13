@@ -91,6 +91,23 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             url: SITE_URL,
             logo: `${SITE_URL}/favicon.svg`,
             description: SITE_DESCRIPTION,
+            email: "hello@accessiblexpress.com",
+            telephone: "+1-512-678-5033",
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: "3800 N Lamar Blvd, Suite 200",
+              addressLocality: "Austin",
+              addressRegion: "TX",
+              postalCode: "78756",
+              addressCountry: "US",
+            },
+            contactPoint: {
+              "@type": "ContactPoint",
+              telephone: "+1-512-678-5033",
+              contactType: "customer service",
+              availableLanguage: ["English"],
+            },
+            sameAs: [],
           }}
         />
         <JsonLd
