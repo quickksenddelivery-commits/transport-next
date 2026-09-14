@@ -788,8 +788,18 @@ function CreateTab({ onCreate }: { onCreate: (body: Omit<AdminShipment, 'id' | '
   const [success, setSuccess] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }))
+
+  const copyTrackingNumber = async () => {
+    if (!success) return
+    try {
+      await navigator.clipboard.writeText(success)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch { /* clipboard unavailable — ignore */ }
+  }
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -829,7 +839,21 @@ function CreateTab({ onCreate }: { onCreate: (body: Omit<AdminShipment, 'id' | '
         <p className="text-slate-500 mb-6">The shipment has been added to the system and can now be tracked.</p>
         <div className="bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-5 mb-6">
           <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Tracking Number</p>
-          <p className="text-2xl font-black font-mono text-slate-800">{success}</p>
+          <div className="flex items-center justify-center gap-2">
+            <p className="text-2xl font-black font-mono text-slate-800">{success}</p>
+            <button
+              type="button"
+              onClick={copyTrackingNumber}
+              title={copied ? 'Copied!' : 'Copy tracking number'}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-yellow-100 transition-colors shrink-0"
+            >
+              {copied ? (
+                <svg className="w-5 h-5 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}><path d="M5 13l4 4L19 7"/></svg>
+              ) : (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75}><path d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75"/></svg>
+              )}
+            </button>
+          </div>
         </div>
         <div className="flex gap-3 justify-center">
           <button onClick={() => setSuccess(null)} className="btn-primary">
