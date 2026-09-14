@@ -91,7 +91,7 @@ export default function QuickTrack() {
             ))}
             <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
             <a
-              href="https://wa.me/15126785033"
+              href="https://wa.me/18255894355"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-xs font-semibold transition-opacity hover:opacity-80"

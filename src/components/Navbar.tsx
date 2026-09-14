@@ -133,14 +133,14 @@ export default function Navbar() {
             <span className="w-px h-4 bg-white/10" />
 
             <a
-              href="tel:+15126785033"
+              href="tel:+18182784544"
               className="flex items-center gap-2 transition-colors hover:text-white"
               style={{ color: 'inherit', textDecoration: 'none' }}
             >
               <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75}>
                 <path d="M2.25 6.338c0 .768.107 1.51.303 2.21 1.14 4.075 4.833 7.77 8.908 8.907.7.196 1.443.303 2.21.303 2.074 0 4.012-.594 5.644-1.625M2.25 6.338C2.25 4.517 3.663 3 5.406 3h1.125c.337 0 .662.088.948.254L9.374 4.46a1.125 1.125 0 01.414 1.512L8.73 7.67a.75.75 0 00-.05.544l.052.213c.398 1.625 1.455 3.178 2.73 4.504 1.325 1.275 2.879 2.332 4.504 2.73l.213.052a.75.75 0 00.544-.05l1.696-1.057a1.125 1.125 0 011.512.414l1.207 1.9c.167.287.255.61.255.949v1.125c0 1.742-1.516 3.156-3.338 3.156"/>
               </svg>
-              +1 (512) 678-5033
+              +1 (818) 278-4544
             </a>
           </div>
 

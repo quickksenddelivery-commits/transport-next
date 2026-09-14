@@ -98,7 +98,7 @@ export default function ShippingPolicyPage() {
 
             <Block title="11. Contact">
               For shipping enquiries:<br />
-              <a href="mailto:support@accessiblexpress.com" className="text-red-600 hover:underline">support@accessiblexpress.com</a> · +1 (512) 678-5033
+              <a href="mailto:support@accessiblexpress.com" className="text-red-600 hover:underline">support@accessiblexpress.com</a> · <a href="tel:+18182784544" className="text-red-600 hover:underline">+1 (818) 278-4544</a>
             </Block>
 
           </div>

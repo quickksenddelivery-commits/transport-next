@@ -44,7 +44,7 @@ const CATEGORIES = [
 ]
 
 const FAQS = [
-  { q: 'How do I track my shipment?', a: 'Visit our Track page and enter your tracking number (format: QSD-XXXX-XXXXXX). You can also track via WhatsApp by sending your tracking number to +1 (512) 678-5033.' },
+  { q: 'How do I track my shipment?', a: 'Visit our Track page and enter your tracking number (format: QSD-XXXX-XXXXXX). You can also track via WhatsApp by sending your tracking number to +1 (825) 589-4355.' },
   { q: 'What does "In Transit" mean?', a: "Your shipment has left the origin facility and is on its way to the destination. You'll receive an update when it arrives at the next hub." },
   { q: 'How do I get a shipping quote?', a: 'Use our online Quote Calculator on the homepage, or contact our sales team at support@accessiblexpress.com for custom business rates.' },
   { q: 'What items are prohibited?', a: 'We cannot ship hazardous materials, live animals, currency, illegal substances, or items prohibited by destination country regulations. Contact us for a full list.' },
@@ -177,7 +177,7 @@ export default function HelpCenterPage() {
             <Link to="/contact" className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold" style={{ background: '#1565C0', color: 'white', textDecoration: 'none' }}>
               Contact Support
             </Link>
-            <a href="https://wa.me/15126785033" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold" style={{ background: '#25D366', color: 'white', textDecoration: 'none' }}>
+            <a href="https://wa.me/18255894355" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold" style={{ background: '#25D366', color: 'white', textDecoration: 'none' }}>
               WhatsApp Chat
             </a>
           </div>
