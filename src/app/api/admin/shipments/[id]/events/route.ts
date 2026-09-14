@@ -1,6 +1,5 @@
 import type { NextRequest } from 'next/server';
-import { connectDB } from '@/server/config/database';
-import { Shipment } from '@/server/models/Shipment';
+import { prisma } from '@/server/config/prisma';
 import { authenticate } from '@/server/middleware/auth';
 import { AppError, errorResponse, jsonSuccess } from '@/server/middleware/errorHandler';
 import { logRoute } from '@/server/middleware/requestLogger';
@@ -10,7 +9,6 @@ import type { TemplateShipment } from '@/server/services/email.templates';
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    await connectDB();
     const userId = await authenticate(request);
     const { id } = await params;
 
@@ -20,26 +18,41 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     >;
     if (!desc) throw new AppError('Event description is required', 400);
 
-    const shipment = await Shipment.findOneAndUpdate(
-      { _id: id, isDeleted: false },
-      { $push: { events: { time, date, location, lat, lng, desc, type } } },
-      { returnDocument: 'after' }
-    );
+    const existing = await prisma.shipment.findFirst({ where: { id, isDeleted: false } });
+    if (!existing) throw new AppError('Shipment not found', 404);
 
-    if (!shipment) throw new AppError('Shipment not found', 404);
-    const newEvent = shipment.events[shipment.events.length - 1];
+    const newEvent = await prisma.shipmentEvent.create({
+      data: {
+        shipmentId: id,
+        time: time as string | undefined,
+        date: date as string | undefined,
+        location: location as string | undefined,
+        lat: lat as number | undefined,
+        lng: lng as number | undefined,
+        desc: String(desc),
+        type: (type as string) || 'info',
+      },
+    });
+
+    const shipment = await prisma.shipment.findUnique({ where: { id }, include: { events: true } });
+    const recipient = shipment?.recipient as { email?: string } | null;
 
     let notified = false;
     let notifyError: string | undefined;
     try {
-      const to = shipment.toObject() as unknown as TemplateShipment;
+      const to = shipment as unknown as TemplateShipment;
       // Delay alert — send when an exception event is added
-      if (type === 'exception' && shipment.recipient?.email) {
-        await sendDelayAlert(to, newEvent);
+      if (type === 'exception' && recipient?.email) {
+        await sendDelayAlert(to, {
+          desc: newEvent.desc,
+          location: newEvent.location ?? undefined,
+          date: newEvent.date ?? undefined,
+          time: newEvent.time ?? undefined,
+        });
         notified = true;
       }
       // In-transit update — send when a transit event is added
-      if (type === 'transit' && shipment.recipient?.email) {
+      if (type === 'transit' && recipient?.email) {
         await sendInTransitAlert(to, String(location || ''));
         notified = true;
       }
@@ -49,7 +62,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     logRoute(request, 201, { userId });
-    return jsonSuccess({ event: newEvent, shipment, notified, notifyError }, 201);
+    return jsonSuccess({ event: { ...newEvent, _id: newEvent.id }, shipment, notified, notifyError }, 201);
   } catch (err) {
     return errorResponse(err);
   }

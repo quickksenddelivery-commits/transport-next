@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server';
-import { connectDB } from '@/server/config/database';
-import { Shipment } from '@/server/models/Shipment';
+import { Prisma } from '@prisma/client';
+import { prisma } from '@/server/config/prisma';
 import { authenticate } from '@/server/middleware/auth';
 import { AppError, errorResponse, jsonMessage, jsonSuccess } from '@/server/middleware/errorHandler';
 import { logRoute } from '@/server/middleware/requestLogger';
@@ -23,11 +23,10 @@ const STATUS_EMAIL_MAP: Record<string, (s: TemplateShipment) => Promise<unknown>
 // ─── Single Shipment ─────────────────────────────────────────────────────────
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    await connectDB();
     const userId = await authenticate(request);
     const { id } = await params;
 
-    const shipment = await Shipment.findOne({ _id: id, isDeleted: false }).lean();
+    const shipment = await prisma.shipment.findFirst({ where: { id, isDeleted: false }, include: { events: true } });
     if (!shipment) throw new AppError('Shipment not found', 404);
 
     logRoute(request, 200, { userId });
@@ -40,7 +39,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 // ─── Update Shipment ─────────────────────────────────────────────────────────
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    await connectDB();
     const userId = await authenticate(request);
     const { id } = await params;
 
@@ -51,26 +49,30 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     if (body.status === 'delivered' && !body.deliveredAt) {
       body.deliveredAt = new Date();
     }
+    if (typeof body.eta === 'string') body.eta = new Date(body.eta);
+    if (typeof body.deliveredAt === 'string') body.deliveredAt = new Date(body.deliveredAt);
 
-    const shipment = await Shipment.findOneAndUpdate(
-      { _id: id, isDeleted: false },
-      body,
-      { returnDocument: 'after', runValidators: true }
-    );
+    const existing = await prisma.shipment.findFirst({ where: { id, isDeleted: false } });
+    if (!existing) throw new AppError('Shipment not found', 404);
 
-    if (!shipment) throw new AppError('Shipment not found', 404);
+    const shipment = await prisma.shipment.update({
+      where: { id },
+      data: body as Prisma.ShipmentUncheckedUpdateInput,
+      include: { events: true },
+    });
 
     // Send the status alert email inline so the admin gets real confirmation
     let notified = false;
     let notifyError: string | undefined;
     const newStatus = body.status;
+    const recipient = shipment.recipient as { email?: string } | null;
     if (
       newStatus &&
       STATUS_EMAIL_MAP[String(newStatus)] &&
-      shipment.recipient?.email
+      recipient?.email
     ) {
       try {
-        await STATUS_EMAIL_MAP[String(newStatus)](shipment.toObject() as unknown as TemplateShipment);
+        await STATUS_EMAIL_MAP[String(newStatus)](shipment as unknown as TemplateShipment);
         notified = true;
       } catch (err) {
         logger.warn(`Status alert email failed [${newStatus}]: ${(err as Error).message}`);
@@ -88,17 +90,13 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 // ─── Delete Shipment (soft delete) ───────────────────────────────────────────
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    await connectDB();
     const userId = await authenticate(request);
     const { id } = await params;
 
-    const shipment = await Shipment.findOneAndUpdate(
-      { _id: id, isDeleted: false },
-      { isDeleted: true },
-      { returnDocument: 'after' }
-    );
+    const existing = await prisma.shipment.findFirst({ where: { id, isDeleted: false } });
+    if (!existing) throw new AppError('Shipment not found', 404);
 
-    if (!shipment) throw new AppError('Shipment not found', 404);
+    await prisma.shipment.update({ where: { id }, data: { isDeleted: true } });
 
     logRoute(request, 200, { userId });
     return jsonMessage('Shipment deleted');

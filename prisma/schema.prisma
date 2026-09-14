@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  firstName     String
+  lastName      String
+  email         String    @unique
+  username      String?   @unique
+  password      String
+  role          String    @default("admin")
+  isActive      Boolean   @default(true)
+  lastLogin     DateTime?
+  loginAttempts Int       @default(0)
+  lockUntil     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Shipment {
+  id             String    @id @default(cuid())
+  trackingNumber String    @unique
+  status         String    @default("pending")
+  service        String    @default("standard")
+  sender         Json
+  recipient      Json
+  weight         Float
+  dimensions     Json?
+  contents       String?
+  declaredValue  Float     @default(0)
+  price          Float     @default(0)
+  eta            DateTime?
+  deliveredAt    DateTime?
+  notes          String?
+  isDeleted      Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  events         ShipmentEvent[]
+
+  @@index([status, createdAt])
+}
+
+model ShipmentEvent {
+  id         String   @id @default(cuid())
+  shipmentId String
+  shipment   Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  time       String?
+  date       String?
+  location   String?
+  lat        Float?
+  lng        Float?
+  desc       String
+  type       String   @default("info")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([shipmentId])
+}
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

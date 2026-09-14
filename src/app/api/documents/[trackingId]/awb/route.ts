@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { connectDB } from '@/server/config/database';
-import { Shipment } from '@/server/models/Shipment';
+import { prisma } from '@/server/config/prisma';
 import { AppError, errorResponse } from '@/server/middleware/errorHandler';
 import { generateAWB } from '@/server/services/document.service';
 import { normalizeTrackingId } from '@/server/utils/helpers';
@@ -12,13 +11,12 @@ export async function GET(
   { params }: { params: Promise<{ trackingId: string }> }
 ) {
   try {
-    await connectDB();
     const { trackingId } = await params;
 
-    const shipment = await Shipment.findOne({
-      trackingNumber: normalizeTrackingId(trackingId),
-      isDeleted: false,
-    }).lean();
+    const shipment = await prisma.shipment.findFirst({
+      where: { trackingNumber: normalizeTrackingId(trackingId), isDeleted: false },
+      include: { events: true },
+    });
 
     if (!shipment) throw new AppError('Tracking number not found', 404);
 

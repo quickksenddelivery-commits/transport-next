@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server';
-import { connectDB } from '@/server/config/database';
-import { Shipment } from '@/server/models/Shipment';
+import type { Prisma } from '@prisma/client';
+import { prisma } from '@/server/config/prisma';
 import { authenticate } from '@/server/middleware/auth';
 import { errorResponse, jsonPaged, jsonSuccess } from '@/server/middleware/errorHandler';
 import { logRoute } from '@/server/middleware/requestLogger';
@@ -12,7 +12,6 @@ import type { TemplateShipment } from '@/server/services/email.templates';
 // ─── Shipments List ─────────────────────────────────────────────────────────
 export async function GET(request: NextRequest) {
   try {
-    await connectDB();
     const userId = await authenticate(request);
 
     const { searchParams } = new URL(request.url);
@@ -23,22 +22,21 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status') || undefined;
     const search = searchParams.get('search') || undefined;
 
-    const filter: Record<string, unknown> = { isDeleted: false };
-    if (status) filter.status = status;
+    const where: Prisma.ShipmentWhereInput = { isDeleted: false };
+    if (status) where.status = status;
     if (search) {
-      const re = { $regex: search, $options: 'i' };
-      filter.$or = [
-        { trackingNumber: re },
-        { 'sender.name': re },
-        { 'recipient.name': re },
-        { 'sender.city': re },
-        { 'recipient.city': re },
+      where.OR = [
+        { trackingNumber: { contains: search, mode: 'insensitive' } },
+        { sender: { path: ['name'], string_contains: search } },
+        { recipient: { path: ['name'], string_contains: search } },
+        { sender: { path: ['city'], string_contains: search } },
+        { recipient: { path: ['city'], string_contains: search } },
       ];
     }
 
     const [shipments, total] = await Promise.all([
-      Shipment.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
-      Shipment.countDocuments(filter),
+      prisma.shipment.findMany({ where, orderBy: { createdAt: 'desc' }, skip, take: limit, include: { events: true } }),
+      prisma.shipment.count({ where }),
     ]);
 
     logRoute(request, 200, { userId, query: { page, limit, status, search } });
@@ -51,18 +49,22 @@ export async function GET(request: NextRequest) {
 // ─── Create Shipment ─────────────────────────────────────────────────────────
 export async function POST(request: NextRequest) {
   try {
-    await connectDB();
     const userId = await authenticate(request);
 
-    const body = await request.json().catch(() => ({}));
-    const shipment = await Shipment.create({
-      trackingNumber: generateTrackingNumber(),
-      ...(body as object),
+    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    delete body.trackingNumber;
+    const shipment = await prisma.shipment.create({
+      data: {
+        ...(body as Prisma.ShipmentUncheckedCreateInput),
+        trackingNumber: generateTrackingNumber(),
+      },
+      include: { events: true },
     });
 
     // Send all shipping documents to recipient (non-blocking)
-    if (shipment.recipient?.email) {
-      sendShipmentDocuments(shipment.toObject() as unknown as TemplateShipment).catch((err) =>
+    const recipient = shipment.recipient as { email?: string } | null;
+    if (recipient?.email) {
+      sendShipmentDocuments(shipment as unknown as TemplateShipment).catch((err) =>
         logger.warn(`Shipment documents email failed: ${err.message}`)
       );
     }

@@ -1,5 +1,4 @@
 import type { NextRequest } from 'next/server';
-import { connectDB } from '@/server/config/database';
 import { authenticate } from '@/server/middleware/auth';
 import { AppError, errorResponse, jsonSuccess } from '@/server/middleware/errorHandler';
 import { logRoute } from '@/server/middleware/requestLogger';
@@ -10,7 +9,6 @@ import { logger } from '@/server/utils/logger';
 // send CORS headers, so a direct browser fetch is blocked outright.
 export async function GET(request: NextRequest) {
   try {
-    await connectDB();
     const userId = await authenticate(request);
 
     const q = (new URL(request.url).searchParams.get('q') || '').trim();

@@ -1,4 +1,4 @@
-const requiredEnvVars = ['MONGODB_URI', 'JWT_SECRET', 'JWT_REFRESH_SECRET'];
+const requiredEnvVars = ['DATABASE_URL', 'JWT_SECRET', 'JWT_REFRESH_SECRET'];
 const productionEnvVars = [...requiredEnvVars, 'RESEND_API_KEY'];
 
 export const validateEnv = () => {
@@ -14,7 +14,7 @@ export const env = {
   PORT: parseInt(process.env.PORT || '5000', 10),
 
   // Database
-  MONGODB_URI: process.env.MONGODB_URI,
+  DATABASE_URL: process.env.DATABASE_URL,
 
   // JWT
   JWT_SECRET: process.env.JWT_SECRET || '',

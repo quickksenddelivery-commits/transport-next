@@ -1,6 +1,5 @@
 import type { NextRequest } from 'next/server';
-import { connectDB } from '@/server/config/database';
-import { Shipment } from '@/server/models/Shipment';
+import { prisma } from '@/server/config/prisma';
 import { authenticate } from '@/server/middleware/auth';
 import { AppError, errorResponse, jsonSuccess } from '@/server/middleware/errorHandler';
 import { logRoute } from '@/server/middleware/requestLogger';
@@ -11,7 +10,6 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string; eventId: string }> }
 ) {
   try {
-    await connectDB();
     const userId = await authenticate(request);
     const { id, eventId } = await params;
 
@@ -20,26 +18,25 @@ export async function PATCH(
       unknown
     >;
 
+    const existingEvent = await prisma.shipmentEvent.findFirst({
+      where: { id: eventId, shipmentId: id, shipment: { isDeleted: false } },
+    });
+    if (!existingEvent) throw new AppError('Shipment or event not found', 404);
+
     const update: Record<string, unknown> = {};
-    if (desc !== undefined) update['events.$.desc'] = desc;
-    if (location !== undefined) update['events.$.location'] = location;
-    if (lat !== undefined) update['events.$.lat'] = lat;
-    if (lng !== undefined) update['events.$.lng'] = lng;
-    if (date !== undefined) update['events.$.date'] = date;
-    if (time !== undefined) update['events.$.time'] = time;
-    if (type !== undefined) update['events.$.type'] = type;
+    if (desc !== undefined) update.desc = desc;
+    if (location !== undefined) update.location = location;
+    if (lat !== undefined) update.lat = lat;
+    if (lng !== undefined) update.lng = lng;
+    if (date !== undefined) update.date = date;
+    if (time !== undefined) update.time = time;
+    if (type !== undefined) update.type = type;
 
-    const shipment = await Shipment.findOneAndUpdate(
-      { _id: id, isDeleted: false, 'events._id': eventId },
-      { $set: update },
-      { returnDocument: 'after' }
-    );
-
-    if (!shipment) throw new AppError('Shipment or event not found', 404);
-    const updated = shipment.events.find((e) => String(e._id) === eventId);
+    const updated = await prisma.shipmentEvent.update({ where: { id: eventId }, data: update });
+    const shipment = await prisma.shipment.findUnique({ where: { id }, include: { events: true } });
 
     logRoute(request, 200, { userId });
-    return jsonSuccess({ event: updated, shipment });
+    return jsonSuccess({ event: { ...updated, _id: updated.id }, shipment });
   } catch (err) {
     return errorResponse(err);
   }
@@ -51,17 +48,14 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string; eventId: string }> }
 ) {
   try {
-    await connectDB();
     const userId = await authenticate(request);
     const { id, eventId } = await params;
 
-    const shipment = await Shipment.findOneAndUpdate(
-      { _id: id, isDeleted: false },
-      { $pull: { events: { _id: eventId } } },
-      { returnDocument: 'after' }
-    );
+    const existing = await prisma.shipment.findFirst({ where: { id, isDeleted: false } });
+    if (!existing) throw new AppError('Shipment not found', 404);
 
-    if (!shipment) throw new AppError('Shipment not found', 404);
+    await prisma.shipmentEvent.deleteMany({ where: { id: eventId, shipmentId: id } });
+    const shipment = await prisma.shipment.findUnique({ where: { id }, include: { events: true } });
 
     logRoute(request, 200, { userId });
     return jsonSuccess({ shipment });

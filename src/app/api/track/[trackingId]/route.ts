@@ -1,6 +1,5 @@
 import type { NextRequest } from 'next/server';
-import { connectDB } from '@/server/config/database';
-import { Shipment } from '@/server/models/Shipment';
+import { prisma } from '@/server/config/prisma';
 import { AppError, errorResponse, jsonSuccess } from '@/server/middleware/errorHandler';
 import { normalizeTrackingId } from '@/server/utils/helpers';
 
@@ -20,7 +19,6 @@ export async function GET(
   { params }: { params: Promise<{ trackingId: string }> }
 ) {
   try {
-    await connectDB();
     const { trackingId } = await params;
     const normalizedTrackId = normalizeTrackingId(trackingId);
     const possibleTrackIds = [normalizedTrackId];
@@ -31,13 +29,17 @@ export async function GET(
       possibleTrackIds.push(normalizedTrackId.replace(/^QSD-/, 'AXP-'));
     }
 
-    const shipment = await Shipment.findOne({
-      trackingNumber: { $in: possibleTrackIds },
-    })
-      .select('-isDeleted -notes -declaredValue')
-      .lean();
+    const shipment = await prisma.shipment.findFirst({
+      where: { trackingNumber: { in: possibleTrackIds } },
+      include: { events: true },
+    });
 
     if (!shipment) throw new AppError('Tracking number not found', 404);
+
+    const sender = shipment.sender as { name?: string; city?: string; country?: string } | null;
+    const recipient = shipment.recipient as
+      | { name?: string; city?: string; country?: string; email?: string }
+      | null;
 
     // Mask personal details for public response
     const masked = {
@@ -48,20 +50,20 @@ export async function GET(
       deliveredAt: shipment.deliveredAt,
       createdAt: shipment.createdAt,
       sender: {
-        name: maskName(shipment.sender?.name),
-        city: shipment.sender?.city,
-        country: shipment.sender?.country,
+        name: maskName(sender?.name),
+        city: sender?.city,
+        country: sender?.country,
       },
       recipient: {
-        name: maskName(shipment.recipient?.name),
-        city: shipment.recipient?.city,
-        country: shipment.recipient?.country,
-        email: maskEmail(shipment.recipient?.email),
+        name: maskName(recipient?.name),
+        city: recipient?.city,
+        country: recipient?.country,
+        email: maskEmail(recipient?.email),
       },
       weight: shipment.weight,
-      events: [...(shipment.events || [])].sort(
-        (a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
-      ),
+      events: [...shipment.events]
+        .map((e) => ({ ...e, _id: e.id }))
+        .sort((a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()),
     };
 
     return jsonSuccess({ shipment: masked });

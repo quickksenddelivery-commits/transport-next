@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import type { NextRequest } from 'next/server';
-import { User } from '../models/User';
+import { prisma } from '../config/prisma';
 import { env } from '../config/env';
 import { AppError } from './errorHandler';
 
@@ -23,9 +23,9 @@ export const authenticate = async (request: NextRequest | Request): Promise<stri
 
   if (!payload.id) throw new AppError('Invalid or expired token', 401);
 
-  const user = await User.findById(payload.id);
+  const user = await prisma.user.findUnique({ where: { id: payload.id } });
   if (!user) throw new AppError('User no longer exists', 401);
   if (!user.isActive) throw new AppError('Account deactivated', 403);
 
-  return String(user._id);
+  return user.id;
 };

@@ -1,13 +1,13 @@
 import type { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
-import { connectDB } from '@/server/config/database';
+import { prisma } from '@/server/config/prisma';
 import { env } from '@/server/config/env';
-import { User } from '@/server/models/User';
 import { AppError, errorResponse, jsonSuccess } from '@/server/middleware/errorHandler';
 import { assertValid, customRule, required } from '@/server/middleware/validate';
 import { authLimiter, getClientIp } from '@/server/middleware/rateLimit';
 import { logRoute } from '@/server/middleware/requestLogger';
 import { logger } from '@/server/utils/logger';
+import { comparePassword, isLocked, loginAttemptPatch, sanitizeUser } from '@/server/models/user.helpers';
 
 const signToken = (id: string) =>
   jwt.sign({ id }, env.JWT_SECRET, {
@@ -17,7 +17,6 @@ const signToken = (id: string) =>
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
   try {
-    await connectDB();
     await authLimiter(request);
 
     const body = await request.json().catch(() => ({}));
@@ -42,38 +41,36 @@ export async function POST(request: NextRequest) {
     }
 
     const query = identifier.includes('@') ? { email: identifier } : { username: identifier };
-    const user = await User.findOne(query).select('+password +loginAttempts +lockUntil');
+    const user = await prisma.user.findUnique({ where: query });
 
     if (!user) {
       logger.warn(`Login failed: user not found — identifier: ${identifier} — IP: ${ip}`);
       throw new AppError('Invalid credentials', 401);
     }
 
-    if (user.isLocked) {
+    if (isLocked(user)) {
       throw new AppError('Account temporarily locked. Try again later', 423);
     }
 
-    const isMatch = await user.comparePassword(password);
+    const isMatch = await comparePassword(password, user.password);
     if (!isMatch) {
-      await user.incLoginAttempts();
+      await prisma.user.update({ where: { id: user.id }, data: loginAttemptPatch(user) });
       logger.warn(`Login failed: wrong password — identifier: ${identifier} — IP: ${ip}`);
       throw new AppError('Invalid credentials', 401);
     }
 
     if (!user.isActive) throw new AppError('Account deactivated. Contact support', 403);
 
-    await user.updateOne({ loginAttempts: 0, $unset: { lockUntil: 1 }, lastLogin: new Date() });
+    const updated = await prisma.user.update({
+      where: { id: user.id },
+      data: { loginAttempts: 0, lockUntil: null, lastLogin: new Date() },
+    });
 
-    const token = signToken(String(user._id));
-
-    const userObj = user.toObject() as unknown as Record<string, unknown>;
-    delete userObj.password;
-    delete userObj.loginAttempts;
-    delete userObj.lockUntil;
+    const token = signToken(updated.id);
 
     logger.info(`Admin login — identifier: ${identifier} — IP: ${ip}`);
-    logRoute(request, 200, { body: { email: identifier }, userId: String(user._id) });
-    return jsonSuccess({ token, user: userObj });
+    logRoute(request, 200, { body: { email: identifier }, userId: updated.id });
+    return jsonSuccess({ token, user: sanitizeUser(updated) });
   } catch (err) {
     const status = (err as { statusCode?: number }).statusCode ?? 500;
     logRoute(request, status, { body: { identifier: (request as unknown as { body?: { identifier?: string } }).body?.identifier } });
