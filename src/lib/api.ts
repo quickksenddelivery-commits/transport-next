@@ -68,7 +68,10 @@ export interface AdminShipment {
 }
 
 function normalizeShipment(s: Record<string, unknown>): AdminShipment {
-  return { ...(s as unknown as AdminShipment), id: (s._id ?? s.id) as string }
+  const events = Array.isArray(s.events)
+    ? (s.events as Record<string, unknown>[]).map((e) => ({ ...e, _id: (e._id ?? e.id) as string }))
+    : s.events
+  return { ...(s as unknown as AdminShipment), id: (s._id ?? s.id) as string, events: events as ShipEvent[] }
 }
 
 export interface QuoteOption {

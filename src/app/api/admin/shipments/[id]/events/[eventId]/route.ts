@@ -33,7 +33,7 @@ export async function PATCH(
     if (type !== undefined) update.type = type;
 
     const updated = await prisma.shipmentEvent.update({ where: { id: eventId }, data: update });
-    const shipment = await prisma.shipment.findUnique({ where: { id }, include: { events: true } });
+    const shipment = await prisma.shipment.findUnique({ where: { id }, include: { events: { orderBy: { createdAt: 'asc' } } } });
 
     logRoute(request, 200, { userId });
     return jsonSuccess({ event: { ...updated, _id: updated.id }, shipment });
@@ -55,7 +55,7 @@ export async function DELETE(
     if (!existing) throw new AppError('Shipment not found', 404);
 
     await prisma.shipmentEvent.deleteMany({ where: { id: eventId, shipmentId: id } });
-    const shipment = await prisma.shipment.findUnique({ where: { id }, include: { events: true } });
+    const shipment = await prisma.shipment.findUnique({ where: { id }, include: { events: { orderBy: { createdAt: 'asc' } } } });
 
     logRoute(request, 200, { userId });
     return jsonSuccess({ shipment });

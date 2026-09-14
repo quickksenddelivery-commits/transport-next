@@ -15,7 +15,7 @@ export async function GET(
 
     const shipment = await prisma.shipment.findFirst({
       where: { trackingNumber: normalizeTrackingId(trackingId), isDeleted: false },
-      include: { events: true },
+      include: { events: { orderBy: { createdAt: 'asc' } } },
     });
 
     if (!shipment) throw new AppError('Tracking number not found', 404);

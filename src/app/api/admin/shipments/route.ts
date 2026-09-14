@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     }
 
     const [shipments, total] = await Promise.all([
-      prisma.shipment.findMany({ where, orderBy: { createdAt: 'desc' }, skip, take: limit, include: { events: true } }),
+      prisma.shipment.findMany({ where, orderBy: { createdAt: 'desc' }, skip, take: limit, include: { events: { orderBy: { createdAt: 'asc' } } } }),
       prisma.shipment.count({ where }),
     ]);
 
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
         ...(body as Prisma.ShipmentUncheckedCreateInput),
         trackingNumber: generateTrackingNumber(),
       },
-      include: { events: true },
+      include: { events: { orderBy: { createdAt: 'asc' } } },
     });
 
     // Send all shipping documents to recipient (non-blocking)

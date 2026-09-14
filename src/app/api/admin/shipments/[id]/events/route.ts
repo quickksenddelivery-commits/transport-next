@@ -34,7 +34,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       },
     });
 
-    const shipment = await prisma.shipment.findUnique({ where: { id }, include: { events: true } });
+    const shipment = await prisma.shipment.findUnique({ where: { id }, include: { events: { orderBy: { createdAt: 'asc' } } } });
     const recipient = shipment?.recipient as { email?: string } | null;
 
     let notified = false;

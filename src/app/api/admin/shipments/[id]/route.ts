@@ -26,7 +26,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const userId = await authenticate(request);
     const { id } = await params;
 
-    const shipment = await prisma.shipment.findFirst({ where: { id, isDeleted: false }, include: { events: true } });
+    const shipment = await prisma.shipment.findFirst({ where: { id, isDeleted: false }, include: { events: { orderBy: { createdAt: 'asc' } } } });
     if (!shipment) throw new AppError('Shipment not found', 404);
 
     logRoute(request, 200, { userId });
@@ -60,7 +60,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     const shipment = await prisma.shipment.update({
       where: { id },
       data: body as Prisma.ShipmentUncheckedUpdateInput,
-      include: { events: true },
+      include: { events: { orderBy: { createdAt: 'asc' } } },
     });
 
     // Send the status alert email inline so the admin gets real confirmation
