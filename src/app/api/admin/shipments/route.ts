@@ -53,6 +53,13 @@ export async function POST(request: NextRequest) {
 
     const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
     delete body.trackingNumber;
+    // Date inputs arrive as '' when left blank in the admin form — Prisma's
+    // DateTime columns reject that outright, unlike Mongoose's looser casting.
+    if (!body.eta) delete body.eta;
+    else body.eta = new Date(body.eta as string);
+    if (!body.deliveredAt) delete body.deliveredAt;
+    else body.deliveredAt = new Date(body.deliveredAt as string);
+
     const shipment = await prisma.shipment.create({
       data: {
         ...(body as Prisma.ShipmentUncheckedCreateInput),

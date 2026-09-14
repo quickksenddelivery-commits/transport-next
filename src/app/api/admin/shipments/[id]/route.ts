@@ -49,8 +49,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     if (body.status === 'delivered' && !body.deliveredAt) {
       body.deliveredAt = new Date();
     }
-    if (typeof body.eta === 'string') body.eta = new Date(body.eta);
-    if (typeof body.deliveredAt === 'string') body.deliveredAt = new Date(body.deliveredAt);
+    // Date inputs arrive as '' when left blank in the admin form — Prisma's
+    // DateTime columns reject that outright, unlike Mongoose's looser casting.
+    if (typeof body.eta === 'string') body.eta = body.eta ? new Date(body.eta) : undefined;
+    if (typeof body.deliveredAt === 'string') body.deliveredAt = body.deliveredAt ? new Date(body.deliveredAt) : undefined;
 
     const existing = await prisma.shipment.findFirst({ where: { id, isDeleted: false } });
     if (!existing) throw new AppError('Shipment not found', 404);
