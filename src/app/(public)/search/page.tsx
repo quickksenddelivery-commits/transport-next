@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import PageMeta from '../../../components/PageMeta'
@@ -11,6 +11,14 @@ type Result =
   | { type: 'page'; title: string; desc: string; url: string; score: number }
 
 export default function SearchPage() {
+  return (
+    <Suspense fallback={null}>
+      <SearchPageContent />
+    </Suspense>
+  )
+}
+
+function SearchPageContent() {
   const sp = useSearchParams()
   const [q, setQ] = useState(() => (sp.get('q') || ''))
   const [results, setResults] = useState<Result[] | null>(null)
