@@ -1,3 +1,9 @@
+import { env } from '../config/env';
+
+const SITE_URL = env.CLIENT_URL.replace(/\/+$/, '');
+const trackUrl = (trackingNumber?: string): string =>
+  trackingNumber ? `${SITE_URL}/track?q=${encodeURIComponent(trackingNumber)}` : `${SITE_URL}/track`;
+
 export interface TemplateParty {
   name?: string;
   phone?: string;
@@ -181,6 +187,7 @@ export const pickedUp = (shipment: TemplateShipment) =>
     title: 'Package Picked Up!',
     subtitle: `Your shipment #${shipment.trackingNumber} has been collected by our courier.`,
     cta: 'Track Your Package',
+    ctaUrl: trackUrl(shipment.trackingNumber),
     body: `
     <p style="margin:0 0 24px;font-size:15px;color:#334155;line-height:1.6;">
       Hi <strong>${shipment.recipient.name}</strong>, great news! The package being sent to you has been successfully collected and is now in our care.
@@ -203,6 +210,7 @@ export const inTransit = (shipment: TemplateShipment, eventLocation?: string) =>
     title: 'Package In Transit',
     subtitle: `Your shipment is on its way to ${shipment.recipient.city}.`,
     cta: 'Track Your Package',
+    ctaUrl: trackUrl(shipment.trackingNumber),
     body: `
     <p style="margin:0 0 24px;font-size:15px;color:#334155;line-height:1.6;">
       Hi <strong>${shipment.recipient.name}</strong>, your package is moving through our network and is currently in transit to its destination.
@@ -226,6 +234,7 @@ export const outForDelivery = (shipment: TemplateShipment) =>
     title: 'Out for Delivery!',
     subtitle: 'Your package will be delivered today. Please be available to receive it.',
     cta: 'Track Your Package',
+    ctaUrl: trackUrl(shipment.trackingNumber),
     body: `
     <p style="margin:0 0 24px;font-size:15px;color:#334155;line-height:1.6;">
       Hi <strong>${shipment.recipient.name}</strong>, exciting news — your package is <strong>out for delivery</strong> and our driver is heading to your address right now!
@@ -253,6 +262,7 @@ export const delivered = (shipment: TemplateShipment) =>
     title: 'Package Delivered!',
     subtitle: `Delivered on ${fmtDate(shipment.deliveredAt || new Date())}`,
     cta: 'View Delivery Details',
+    ctaUrl: trackUrl(shipment.trackingNumber),
     body: `
     <p style="margin:0 0 24px;font-size:15px;color:#334155;line-height:1.6;">
       Hi <strong>${shipment.recipient.name}</strong>, your package has been <strong>successfully delivered</strong>. We hope everything arrived in perfect condition!
@@ -280,6 +290,7 @@ export const delayAlert = (shipment: TemplateShipment, event: { desc?: string; l
     title: 'Shipment Delay Alert',
     subtitle: 'An unexpected issue has been flagged on your shipment.',
     cta: 'Track Your Package',
+    ctaUrl: trackUrl(shipment.trackingNumber),
     body: `
     <p style="margin:0 0 24px;font-size:15px;color:#334155;line-height:1.6;">
       Hi <strong>${shipment.recipient.name}</strong>, we want to keep you informed. There has been an unexpected delay with your shipment, and we sincerely apologise for any inconvenience this may cause.
@@ -308,6 +319,7 @@ export const newsletterWelcome = (email: string) =>
     title: 'Welcome Aboard!',
     subtitle: "You're now part of the Accessiblexpress family.",
     cta: 'Visit Our Website',
+    ctaUrl: SITE_URL,
     body: `
     <p style="margin:0 0 20px;font-size:15px;color:#334155;line-height:1.6;">
       Thank you for subscribing! You will be the first to know about:
@@ -384,7 +396,7 @@ const docWrapper = (
         <tr><td style="background:${accentColor};border-radius:8px 8px 0 0;padding:12px 24px;">
           <p style="margin:0;font-size:13px;color:#fff;line-height:1.5;">
             Dear <strong>${recipientName}</strong>, your shipment <strong>${trackingNumber}</strong> has been processed.
-            &nbsp;<a href="#" style="color:#fff;font-weight:700;text-decoration:underline;">Track Your Package →</a>
+            &nbsp;<a href="${trackUrl(trackingNumber)}" style="color:#fff;font-weight:700;text-decoration:underline;">Track Your Package →</a>
           </p>
         </td></tr>
 
